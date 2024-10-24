@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
+// const allRoutes = require("./routes");
 const db = require("./db");
 
 db.then(() => {
@@ -9,6 +10,9 @@ db.then(() => {
 }).catch(() => {
   console.log("gagal konek ke db");
 });
+
+app.use(express.json());
+// app.use(allRoutes);
 
 app.listen(PORT, () => {
     console.log("server runnning on port " + PORT);
