@@ -1,19 +1,19 @@
-const express = require("express");
+const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// const allRoutes = require("./routes");
-const db = require("./db");
-
-db.then(() => {
-  console.log("berhasil connect ke db");
-}).catch(() => {
-  console.log("gagal konek ke db");
-});
-
+// Middleware
 app.use(express.json());
-// app.use(allRoutes);
 
+// Koneksi ke MongoDB tanpa opsi yang usang
+mongoose.connect(process.env.DB_URL)
+    .then(() => console.log('Database connected successfully'))
+    .catch(err => console.log('Database connection failed:', err));
+
+// Jalankan server
 app.listen(PORT, () => {
-    console.log("server runnning on port " + PORT);
-  });
+    console.log("Server running on port " + PORT);
+});
