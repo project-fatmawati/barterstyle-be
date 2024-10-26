@@ -9,9 +9,17 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 
 // Koneksi ke MongoDB tanpa opsi yang usang
-mongoose.connect(process.env.DB_URL)
-    .then(() => console.log('Database connected successfully'))
-    .catch(err => console.log('Database connection failed:', err));
+const db = mongoose.connect(process.env.DB_URL)
+    .then(() => {
+        console.log('Database connected successfully');
+        // Middleware routes setelah koneksi berhasil
+        const allRoutes = require("./routes");
+        app.use(allRoutes);
+    })
+    .catch(err => {
+        console.log('Database connection failed:', err);
+        process.exit(1);
+    });
 
 // Jalankan server
 app.listen(PORT, () => {

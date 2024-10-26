@@ -1,15 +1,32 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  name: String,
-  username: String,
-  password: String,
-  email: String,
-  handphone: Number,
-  kuota: Number,
-  category: {
-    type: mongoose.ObjectId,
-    ref: "category"
+  fullName: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  handphone: {
+    type: String,
+    required: true
+  },
+  kuota: {
+    type: Number,
+    min: 0
+  },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category"
   },
 });
 
