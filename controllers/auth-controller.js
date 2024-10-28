@@ -7,11 +7,13 @@ const User = require("../models/User");
 module.exports = {
   regis: async (req, res) => {
     const data = req.body;
+    console.log(data);
 
     // hash password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(data.password, salt);
     data.password = hash;
+    console.log(data);
 
     const newUser = new User(data);
     newUser.save();
@@ -47,6 +49,11 @@ module.exports = {
     res.json({
       message: "login success",
       token,
+        _id: user.id,
+        username: user.username,
+        email: user.email,
+        kuota: user.kuota,
+      
     });
   },
 };

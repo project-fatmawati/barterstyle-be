@@ -14,5 +14,4 @@ route.post("/", addLikes);
 route.put("/:id", editLikesById);
 route.delete("/:id", deleteLikesById);
 
-
 module.exports = route;

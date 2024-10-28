@@ -24,11 +24,20 @@ const userSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category"
-  },
-});
+  // memberId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Member"
+  // },
+
+  isMemberPro : {
+    type: Boolean,
+    default: false,
+  }
+},
+  {
+    timestamps: true
+  }
+);
 
 const User = mongoose.model("User", userSchema);
 

@@ -1,4 +1,5 @@
 const Like = require("../models/Like");
+
 module.exports = {
   // Get all likes
   getAllLikes: async (req, res) => {
@@ -62,5 +63,5 @@ module.exports = {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  },
+  }
 };
