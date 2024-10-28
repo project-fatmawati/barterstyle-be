@@ -10,7 +10,7 @@ const route = express.Router();
 
 route.get("/", getAllLikes);
 route.get("/:id", getLikesById);
-route.post("/", addLikes);
+route.post("/",  addLikes);
 route.put("/:id", editLikesById);
 route.delete("/:id", deleteLikesById);
 
