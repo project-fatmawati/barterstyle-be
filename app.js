@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
+const jwt = require('jsonwebtoken');
+const path = require('path');
+const cors = require('cors');
+
+
+app.use(cors());
 
 const allRoutes = require("./routes");
 const db = require("./db");

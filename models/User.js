@@ -24,10 +24,11 @@ const userSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
-  categoryId: {
+  memberId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Category"
+    ref: "Member"
   },
+
 });
 
 const User = mongoose.model("User", userSchema);

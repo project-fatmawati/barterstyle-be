@@ -36,7 +36,7 @@ module.exports = {
         },
   
   
-    // Update a like
+    // Update Like By Id
     editLikesById: async (req, res) => {
         try {
             const updatedLike = await Like.findByIdAndUpdate(req.params.id, req.body, { new: true });
