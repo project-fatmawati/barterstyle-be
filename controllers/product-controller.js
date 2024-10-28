@@ -18,8 +18,8 @@ exports.createProduct = async (req, res) => {
             category,
             size,
             condition,
-            weatherRecommendation, // Termasuk weatherRecommendation dari request body
-            uploader               // Mengaitkan produk dengan pengguna pengunggah
+            weatherRecommendation,
+            uploader
         });
 
         await newProduct.save();
@@ -32,7 +32,7 @@ exports.createProduct = async (req, res) => {
 // READ All Products
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find().populate('uploader', 'username email'); // Mengambil detail uploader jika diperlukan
+        const products = await Product.find().populate('uploader', 'username email');
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching products', error });
