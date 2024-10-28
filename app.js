@@ -1,4 +1,7 @@
-const express = require("express");
+const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 const jwt = require('jsonwebtoken');
@@ -8,19 +11,23 @@ const cors = require('cors');
 
 app.use(cors());
 
-const allRoutes = require("./routes");
-const db = require("./db");
-
-db.then(() => {
-  console.log("connection database success");
-}).catch((err) => {
-  console.log("connection database failed", err);
-  process.exit(1);
-});
-
+// Middleware
 app.use(express.json());
-app.use(allRoutes);
 
+// Koneksi ke MongoDB tanpa opsi yang usang
+const db = mongoose.connect(process.env.DB_URL)
+    .then(() => {
+        console.log('Database connected successfully');
+        // Middleware routes setelah koneksi berhasil
+        const allRoutes = require("./routes");
+        app.use(allRoutes);
+    })
+    .catch(err => {
+        console.log('Database connection failed:', err);
+        process.exit(1);
+    });
+
+// Jalankan server
 app.listen(PORT, () => {
-    console.log("server runnning on port " + PORT);
-  });
+    console.log("Server running on port " + PORT);
+});
