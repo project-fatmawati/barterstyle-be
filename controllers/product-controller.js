@@ -93,26 +93,26 @@ exports.deleteProduct = async (req, res) => {
     }
 };
 
-// CHECKOUT Product
-exports.checkoutProduct = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
+//  CHECKOUT Product
+// exports.checkoutProduct = async (req, res) => {
+//     try {
+//         const product = await Product.findById(req.params.id);
         
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
+//         if (!product) {
+//             return res.status(404).json({ message: 'Product not found' });
+//         }
         
-        // Periksa apakah produk masih tersedia
-        if (!product.available) {
-            return res.status(400).json({ message: 'Product is already checked out' });
-        }
+//         // Periksa apakah produk masih tersedia
+//         if (!product.available) {
+//             return res.status(400).json({ message: 'Product is already checked out' });
+//         }
 
-        // Tandai produk sebagai tidak tersedia
-        product.available = false;
-        await product.save();
+//         // Tandai produk sebagai tidak tersedia
+//         product.available = false;
+//         await product.save();
 
-        res.status(200).json({ message: 'Product checked out successfully', data: product });
-    } catch (error) {
-        res.status(500).json({ message: 'Error checking out product', error });
-    }
-};
+//         res.status(200).json({ message: 'Product checked out successfully', data: product });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Error checking out product', error });
+//     }
+// };
