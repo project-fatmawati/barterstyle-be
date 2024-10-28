@@ -4,7 +4,7 @@ const authRoute = require("./auth-route");
 const likeRoute = require("./like-route");
 const memberRoute = require("./member-route")
 
-// const { validateToken } = require("../middleware/auth");
+const { validateToken } = require("../middleware/auth");
 
 // route.use((req, res, next) => {
 //     console.log("middleware untuk semua route");
@@ -18,7 +18,7 @@ const memberRoute = require("./member-route")
   });
   
   route.use("/auth", authRoute);
-  route.use("/likes", likeRoute);
-  route.use("/member", memberRoute);
+  route.use("/likes", validateToken, likeRoute);
+  route.use("/member", validateToken, memberRoute);
 
   module.exports = route;
