@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// Schema untuk Product
 const productSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -20,6 +19,7 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    imageUrl: { type: String },
   },
   {
     timestamps: true,

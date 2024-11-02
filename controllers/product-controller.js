@@ -1,96 +1,58 @@
 const Product = require('../models/Product');
+const bucket = require('../config/firebaseConfig'); 
 
 // CREATE Product
 exports.createProduct = async (req, res) => {
-    try {
-        const {
-            title,
-            category,
-            size,
-            condition,
-            weatherRecommendation,
-            uploader
-        } = req.body;
+  try {
+    const {
+      title,
+      category,
+      size,
+      condition,
+      weatherRecommendation,
+      uploader,
+    } = req.body;
 
-        // Membuat instance produk baru dengan data yang diberikan
-        const newProduct = new Product({
-            title,
-            category,
-            size,
-            condition,
-            weatherRecommendation,
-            uploader
-        });
-
-        await newProduct.save();
-        res.status(201).json({ message: 'Product created successfully', data: newProduct });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating product', error });
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
-};
 
-// READ All Products
-exports.getAllProducts = async (req, res) => {
-    try {
-        const products = await Product.find().populate('uploader', 'username email');
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching products', error });
-    }
-};
+    // Upload file ke Firebase
+    const blob = bucket.file(Date.now() + '-' + file.originalname);
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
 
-// READ Single Product by ID
-exports.getProductById = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id).populate('uploader', 'username email');
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching product', error });
-    }
-};
+    blobStream.on('error', (error) => {
+      res.status(500).send({ message: error.message });
+    });
 
-// UPDATE Product
-exports.updateProduct = async (req, res) => {
-    try {
-        const {
-            title,
-            category,
-            size,
-            condition,
-            weatherRecommendation,
-            available
-        } = req.body;
+    blobStream.on('finish', async () => {
+      // URL gambar setelah di-upload ke Firebase
+      const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(blob.name)}?alt=media`;
 
-        // Update produk berdasarkan ID yang diberikan
-        const updatedProduct = await Product.findByIdAndUpdate(
-            req.params.id,
-            { title, category, size, condition, weatherRecommendation, available },
-            { new: true }
-        );
+      // Membuat instance produk baru dengan data yang diberikan
+      const newProduct = new Product({
+        title,
+        category,
+        size,
+        condition,
+        weatherRecommendation,
+        uploader,
+        imageUrl,
+      });
 
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        res.status(200).json({ message: 'Product updated successfully', data: updatedProduct });
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating product', error });
-    }
-};
+      await newProduct.save();
+      res.status(201).json({ message: 'Product created successfully', data: newProduct });
+    });
 
-// DELETE Product
-exports.deleteProduct = async (req, res) => {
-    try {
-        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
-        if (!deletedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        res.status(200).json({ message: 'Product deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting product', error });
-    }
+    blobStream.end(file.buffer);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating product', error });
+  }
 };
 
 //  CHECKOUT Product

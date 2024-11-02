@@ -4,21 +4,16 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const jwt = require('jsonwebtoken');
-const path = require('path');
 const cors = require('cors');
 
-
 app.use(cors());
-
-// Middleware
 app.use(express.json());
 
 // Koneksi ke MongoDB tanpa opsi yang usang
-const db = mongoose.connect(process.env.DB_URL)
+mongoose.connect(process.env.DB_URL)
     .then(() => {
         console.log('Database connected successfully');
-        // Middleware routes setelah koneksi berhasil
+
         const allRoutes = require("./routes");
         app.use(allRoutes);
     })
@@ -27,7 +22,12 @@ const db = mongoose.connect(process.env.DB_URL)
         process.exit(1);
     });
 
-// Jalankan server
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Something went wrong!' });
+});
+
 app.listen(PORT, () => {
     console.log("Server running on port " + PORT);
 });
