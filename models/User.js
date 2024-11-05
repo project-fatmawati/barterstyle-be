@@ -18,21 +18,20 @@ const userSchema = new mongoose.Schema({
   },
   handphone: {
     type: String,
-    required: true
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
   },
   kuota: {
     type: Number,
     min: 0
   },
-  // memberId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Member"
-  // },
-
-  isMemberPro : {
-    type: Boolean,
-    default: false,
-  }
+  memberId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Member"
+  },
 },
   {
     timestamps: true

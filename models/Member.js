@@ -1,13 +1,10 @@
 const mongoose = require('mongoose');
 const memberSchema = new mongoose.Schema({
-    // ...
-    // isFree: {
-    //   type: Boolean,
-    //   default: true
-    // },
-    // isPro3Months: Boolean,
-    // isPro6Months: Boolean
-  });
+  memberFree: String,
+  memberPro3bulan: String,
+  memberPro6bulan: String,
+  }
+  );
 
 const Member = mongoose.model('Member', memberSchema);
 
