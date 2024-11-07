@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    category: { type: String, required: true },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
     size: { type: String, required: true },
     condition: { type: String, required: true },
     weatherRecommendation: {
@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    imageUrl: { type: String },
+    image: { type: String },
   },
   {
     timestamps: true,
