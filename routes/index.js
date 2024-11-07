@@ -3,6 +3,8 @@ const route = express.Router();
 const authRoute = require("./auth-route");
 const likeRoute = require("./like-route");
 const memberRoute = require("./member-route")
+const orderRoute = require("./order-route")
+const productRoute = require("./product-route")
 
 const { validateToken } = require("../middleware/auth");
 
@@ -17,8 +19,12 @@ const { validateToken } = require("../middleware/auth");
     });
   });
   
-  route.use("/auth", authRoute);
-  route.use("/likes", validateToken, likeRoute);
-  route.use("/member", validateToken, memberRoute);
+  route.use("/api/auth", authRoute);
+  route.use("/api/likes", validateToken, likeRoute);
+  route.use("/api/member", validateToken, memberRoute);
+  route.use("/api/like", validateToken, likeRoute);
+  route.use("/api/order", validateToken, orderRoute);
+  route.use("/api/product", validateToken, productRoute);
+
 
   module.exports = route;

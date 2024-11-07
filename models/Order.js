@@ -16,6 +16,10 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" 
     },
     orderItems: [orderItemSchema],
+    poin: {
+      type: String,
+      required: true,
+    },
     shippingAddress: {
       address: { type: String, required: true },
     },
