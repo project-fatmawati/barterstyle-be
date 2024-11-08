@@ -1,7 +1,7 @@
-const { v4: uuidv4 } = require('uuid'); // Import UUID
+const { v4: uuidv4 } = require('uuid');
 const { Product } = require('../models/product');
-const { Category } = require('../models/category');
 const mongoose = require('mongoose');
+const multer = require('multer');
 
 // Image file type validation map
 const FILE_TYPE_MAP = {
@@ -31,12 +31,7 @@ const uploadOptions = multer({ storage: storage });
 
 // Create a new product
 async function createProduct(req, res) {
-    const { category, name, description, richDescription, brand, price, countInStock, rating, numReviews, isFeatured } = req.body;
-    const categoryData = await Category.findById(category);
-    
-    if (!categoryData) {
-        return res.status(400).send('Invalid Category');
-    }
+    const { title, size, condition, weatherRecommendation, available, uploader } = req.body;
 
     const file = req.file;
     if (!file) {
@@ -47,17 +42,13 @@ async function createProduct(req, res) {
     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
     const product = new Product({
-        name,
-        description,
-        richDescription,
-        image: `${basePath}${fileName}`,
-        brand,
-        price,
-        category,
-        countInStock,
-        rating,
-        numReviews,
-        isFeatured
+        title,
+        size,
+        condition,
+        weatherRecommendation,
+        available,
+        uploader,
+        image: `${basePath}${fileName}`
     });
 
     try {
@@ -70,12 +61,7 @@ async function createProduct(req, res) {
 
 // Get all products
 async function getAllProducts(req, res) {
-    let filter = {};
-    if (req.query.categories) {
-        filter = { category: req.query.categories.split(',') };
-    }
-
-    const productList = await Product.find(filter).populate('category');
+    const productList = await Product.find();
     if (!productList) {
         return res.status(500).json({ success: false });
     }
@@ -84,7 +70,7 @@ async function getAllProducts(req, res) {
 
 // Get a single product by ID
 async function getProductById(req, res) {
-    const product = await Product.findById(req.params.id).populate('category');
+    const product = await Product.findById(req.params.id);
     if (!product) {
         return res.status(500).json({ success: false });
     }
@@ -93,30 +79,20 @@ async function getProductById(req, res) {
 
 // Update product details
 async function updateProduct(req, res) {
-    const { category, name, description, richDescription, brand, price, countInStock, rating, numReviews, isFeatured, image } = req.body;
+    const { title, size, condition, weatherRecommendation, available, uploader } = req.body;
     if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).send('Invalid Product Id');
-    }
-
-    const categoryData = await Category.findById(category);
-    if (!categoryData) {
-        return res.status(400).send('Invalid Category');
     }
 
     const product = await Product.findByIdAndUpdate(
         req.params.id,
         {
-            name,
-            description,
-            richDescription,
-            image, 
-            brand,
-            price,
-            category,
-            countInStock,
-            rating,
-            numReviews,
-            isFeatured
+            title,
+            size,
+            condition,
+            weatherRecommendation,
+            available,
+            uploader
         },
         { new: true }
     );
@@ -144,28 +120,3 @@ module.exports = {
     updateProduct,
     deleteProduct
 };
-
-
-//  CHECKOUT Product
-// exports.checkoutProduct = async (req, res) => {
-//     try {
-//         const product = await Product.findById(req.params.id);
-        
-//         if (!product) {
-//             return res.status(404).json({ message: 'Product not found' });
-//         }
-        
-//         // Periksa apakah produk masih tersedia
-//         if (!product.available) {
-//             return res.status(400).json({ message: 'Product is already checked out' });
-//         }
-
-//         // Tandai produk sebagai tidak tersedia
-//         product.available = false;
-//         await product.save();
-
-//         res.status(200).json({ message: 'Product checked out successfully', data: product });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error checking out product', error });
-//     }
-// };

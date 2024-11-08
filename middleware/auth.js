@@ -1,29 +1,32 @@
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
-module.exports = {
-  validateToken: (req, res, next) => {
-    const header = req.headers.authorization;
+function validateToken(req, res, next) {
+  // Ambil header authorization
+  const header = req.headers.authorization;
 
-    if (!header) {
-      res.json("invalid header");
-      return;
-    }
+  // Cek header
+  if (!header) {
+    return res.status(401).json({ message: 'Authorization header is required' });
+  }
 
-    const token = header.split(" ")[1];
+  // Ambil token dari header
+  const token = header.split(' ')[1];
 
-    if (!token) {
-      res.json("invalid token");
-      return;
-    }
+  // Cek token
+  if (!token) {
+    return res.status(401).json({ message: 'Token is required' });
+  }
 
-    try {
-      const payload = jwt.verify(token, process.env.JWT_KEY);
-      req.payload = payload;
-      next();
-    } catch {
-      res.json("invalid token");
-      return;
-    }
-  },
-};
+  try {
+    // Verifikasi token menggunakan JWT
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = payload;
+    next();
+  } catch (error) {
+    // Jika token tidak valid atau ada error lainnya
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+}
+
+module.exports = { validateToken };

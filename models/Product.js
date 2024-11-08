@@ -1,9 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
     size: { type: String, required: true },
     condition: { type: String, required: true },
     weatherRecommendation: {
@@ -16,14 +15,14 @@ const productSchema = new mongoose.Schema(
     available: { type: Boolean, default: true },
     uploader: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
-    image: { type: String },
+    image: { type: String, required: true },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model('Product', productSchema);

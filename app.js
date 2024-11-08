@@ -1,33 +1,38 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const cors = require('cors');
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/public/uploads', express.static('public/uploads'));
 
-// Koneksi ke MongoDB tanpa opsi yang usang
-mongoose.connect(process.env.DB_URL)
-    .then(() => {
-        console.log('Database connected successfully');
+// Koneksi ke MongoDB dengan async/await untuk menangani error
+(async () => {
+  try {
+    await mongoose.connect(process.env.DB_URL);
+    console.log('Database connected successfully');
+  } catch (error) {
+    console.log('Database connection failed:', error);
+    process.exit(1);
+  }
+})();
 
-        const allRoutes = require("./routes");
-        app.use(allRoutes);
-    })
-    .catch(err => {
-        console.log('Database connection failed:', err);
-        process.exit(1);
-    });
+// Menggunakan semua rute
+const allRoutes = require('./routes');
+app.use('/api', allRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
 });
 
+// Start server
 app.listen(PORT, () => {
-    console.log("Server running on port " + PORT);
+  console.log(`Server running on port ${PORT}`);
 });

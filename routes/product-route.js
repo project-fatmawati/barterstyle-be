@@ -4,7 +4,7 @@ const multer = require('multer');
 const productController = require('../controllers/product-controller');
 const { validateToken } = require('../middleware/auth');
 
-// Multer storage and upload options
+// Multer storage dan upload options
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads');
@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 const uploadOptions = multer({ storage: storage });
 
-// Routes for product management
+// Routes untuk manajemen product
 router.post('/', validateToken, uploadOptions.single('image'), productController.createProduct);
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
