@@ -13,7 +13,7 @@ module.exports = {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(data.password, salt);
     data.password = hash;
-    console.log(data);
+    // console.log(data);
 
     const newUser = new User(data);
     newUser.save();
@@ -83,7 +83,7 @@ userDetail: async (req, res) => {
 },
 
 
-Logout: async (req, res) => {
+logout: async (req, res) => {
   try {
     res.clearCookie("token")
     // res.send('<script>localStorage.removeItem("token");</script>');
