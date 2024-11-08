@@ -24,7 +24,7 @@ app.use('/public/uploads', express.static('public/uploads'));
 
 // Menggunakan semua rute
 const allRoutes = require('./routes');
-app.use('/api', allRoutes);
+app.use(allRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
