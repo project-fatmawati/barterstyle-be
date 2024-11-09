@@ -4,7 +4,7 @@ const multer = require('multer');
 const productController = require('../controllers/product-controller');
 const { validateToken } = require('../middleware/auth');
 
-// Multer storage dan upload options
+// Konfigurasi Multer untuk upload file
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads');
@@ -21,7 +21,7 @@ const uploadOptions = multer({ storage: storage });
 router.post('/', validateToken, uploadOptions.single('image'), productController.createProduct);
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
-router.put('/:id', validateToken, productController.updateProduct);
+router.put('/:id', validateToken, uploadOptions.single('image'), productController.updateProduct);
 router.delete('/:id', validateToken, productController.deleteProduct);
 
 module.exports = router;
