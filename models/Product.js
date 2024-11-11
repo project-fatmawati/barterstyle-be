@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
   size: { type: String, required: true },
   color: { type: String, required: true },
   category: { type: String, required: true },
-  condition: { type: String, required: true },
+  description: { type: String, required: true },
   weatherRecommendation: {
     temperatureRange: {
       min: { type: Number, required: true },
