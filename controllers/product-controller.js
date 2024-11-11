@@ -1,10 +1,8 @@
-const { v4: uuidv4 } = require('uuid');
-const { Product } = require('../models/product');
-const mongoose = require('mongoose');
+const Product = require('../models/Product');
 
-// Create a new product
+// Fungsi untuk membuat produk baru
 async function createProduct(req, res) {
-    const { title, size, condition, available, uploader } = req.body;
+    const { title, size, color, category, condition, available, uploader, image } = req.body;
 
     // Parsing `weatherRecommendation` jika ada
     let weatherRecommendation = null;
@@ -16,131 +14,98 @@ async function createProduct(req, res) {
         return res.status(400).send('Invalid JSON format for weatherRecommendation');
     }
 
-    // Validasi keberadaan file
-    const file = req.file;
-    if (!file) {
-        return res.status(400).send('No image in the request');
+    // Validasi URL gambar
+    if (!image) {
+        return res.status(400).send('Image URL is required');
     }
-
-    // Membuat URL gambar
-    const fileName = file.filename;
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
     const product = new Product({
         title,
         size,
+        color,
+        category,
         condition,
         weatherRecommendation,
         available,
         uploader,
-        image: `${basePath}${fileName}`
+        image,
     });
 
     try {
         const newProduct = await product.save();
-        res.send(newProduct);
+        res.status(201).json(newProduct);
     } catch (error) {
         console.error("Error creating product:", error);
         res.status(500).send('The product cannot be created');
     }
 }
 
-// Get all products
+// Fungsi untuk mendapatkan semua produk
 async function getAllProducts(req, res) {
     try {
-        const productList = await Product.find();
-        if (!productList) {
-            return res.status(500).json({ success: false });
-        }
-        res.send(productList);
+        const products = await Product.find();
+        res.status(200).json(products);
     } catch (error) {
-        res.status(500).send('Error retrieving products');
+        console.error("Error fetching products:", error);
+        res.status(500).send('Unable to fetch products');
     }
 }
 
-// Get a single product by ID
+// Fungsi untuk mendapatkan produk berdasarkan ID
 async function getProductById(req, res) {
+    const { id } = req.params;
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findById(id);
         if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
+            return res.status(404).send('Product not found');
         }
-        res.send(product);
+        res.status(200).json(product);
     } catch (error) {
-        res.status(500).send('Error retrieving product');
+        console.error("Error fetching product by ID:", error);
+        res.status(500).send('Unable to fetch product');
     }
 }
 
-// Update product details
+// Fungsi untuk memperbarui produk berdasarkan ID
 async function updateProduct(req, res) {
-    const { title, size, condition, available, uploader } = req.body;
-
-    // Parsing `weatherRecommendation` jika ada
-    let weatherRecommendation = null;
-    try {
-        if (req.body.weatherRecommendation) {
-            weatherRecommendation = JSON.parse(req.body.weatherRecommendation);
-        }
-    } catch (error) {
-        return res.status(400).send('Invalid JSON format for weatherRecommendation');
-    }
-
-    if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(400).send('Invalid Product Id');
-    }
-
-    const file = req.file;
-    let imagePath;
-
-    if (file) {
-        const fileName = file.filename;
-        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
-        imagePath = `${basePath}${fileName}`;
-    }
+    const { id } = req.params;
+    const { title, size, color, category, condition, available, image } = req.body;
 
     try {
-        const product = await Product.findByIdAndUpdate(
-            req.params.id,
-            {
-                title,
-                size,
-                condition,
-                weatherRecommendation,
-                available,
-                uploader,
-                image: imagePath ? imagePath : undefined
-            },
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            { title, size, color, category, condition, available, image },
             { new: true }
         );
-
-        if (!product) {
-            return res.status(404).send('The product cannot be updated!');
+        if (!updatedProduct) {
+            return res.status(404).send('Product not found');
         }
-        res.send(product);
+        res.status(200).json(updatedProduct);
     } catch (error) {
         console.error("Error updating product:", error);
-        res.status(500).send('The product cannot be updated');
+        res.status(500).send('Unable to update product');
     }
 }
 
-// Delete product by ID
+// Fungsi untuk menghapus produk berdasarkan ID
 async function deleteProduct(req, res) {
+    const { id } = req.params;
     try {
-        const product = await Product.findByIdAndRemove(req.params.id);
-        if (product) {
-            return res.status(200).json({ success: true, message: 'The product is deleted!' });
-        } else {
-            return res.status(404).json({ success: false, message: 'Product not found!' });
+        const deletedProduct = await Product.findByIdAndDelete(id);
+        if (!deletedProduct) {
+            return res.status(404).send('Product not found');
         }
+        res.status(200).send('Product deleted successfully');
     } catch (error) {
-        res.status(500).send('Error deleting product');
+        console.error("Error deleting product:", error);
+        res.status(500).send('Unable to delete product');
     }
 }
 
 module.exports = {
     createProduct,
     getAllProducts,
-    getProductById,
+    getProductById, 
     updateProduct,
     deleteProduct
 };
