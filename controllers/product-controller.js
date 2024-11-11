@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 
+// CREATE Product
 async function createProduct(req, res) {
   const { title, size, color, category, description, weatherRecommendation, available, uploader, image } = req.body;
 
@@ -13,6 +14,7 @@ async function createProduct(req, res) {
   }
 }
 
+// GET ALL Product
 async function getAllProducts(req, res) {
   try {
     const products = await Product.find().populate('uploader', 'name email');
@@ -23,6 +25,7 @@ async function getAllProducts(req, res) {
   }
 }
 
+// GET PRODUCT By Id 
 async function getProductById(req, res) {
   try {
     const product = await Product.findById(req.params.id).populate('uploader', 'name email');
@@ -34,6 +37,8 @@ async function getProductById(req, res) {
   }
 }
 
+
+// UPDATE Product
 async function updateProduct(req, res) {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -45,6 +50,7 @@ async function updateProduct(req, res) {
   }
 }
 
+// DELETE Product
 async function deleteProduct(req, res) {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
