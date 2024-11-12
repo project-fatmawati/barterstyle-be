@@ -24,7 +24,7 @@ module.exports = {
   login: async (req, res) => {
     const data = req.body;
 
-    const user = await User.findOne({ username: data.username }).exec();
+    const user = await User.findOne({ email: data.email }).exec();
     if (!user) {
       return res.status(401).json({ message: "Login failed" });
     }
@@ -35,7 +35,7 @@ module.exports = {
     }
 
     const token = jwt.sign(
-      { username: user.username, id: user._id },
+      { email: user.email, id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: '1h' } // optional: set expiration time
     );
