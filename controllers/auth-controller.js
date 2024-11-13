@@ -6,6 +6,7 @@ const User = require("../models/User");
 
 module.exports = {
   regis: async (req, res) => {
+    console.log("test");
     const data = req.body;
     console.log(data);
 
