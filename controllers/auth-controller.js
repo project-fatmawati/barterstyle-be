@@ -26,11 +26,14 @@ module.exports = {
     const data = req.body;
 
     const user = await User.findOne({ email: data.email }).exec();
+    console.log('User ditemukan:', user ? 'Ya' : 'Tidak');
     if (!user) {
       return res.status(401).json({ message: "Login failed" });
     }
 
     const checkPassword = bcrypt.compareSync(data.password, user.password);
+    console.log('Password cocok:', checkPassword ? 'Ya' : 'Tidak');
+
     if (!checkPassword) {
       return res.status(401).json({ message: "Login failed" });
     }
@@ -41,6 +44,8 @@ module.exports = {
       { expiresIn: '1h' } // optional: set expiration time
     );
 
+    console.log('Login berhasil untuk user:', user.email);
+    
     res.json({
       message: "Login success",
       token,
